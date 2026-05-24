@@ -1,0 +1,12 @@
+[package]
+name = "dijag/test123"
+version = "0.1.0"
+registry = "https://github.com/UpliftGames/wally-index"
+realm = "shared"
+
+[dependencies]
+Vide = "alicesaidhi/vide@0.4.0"
+Networker = "lcarpet/networker@0.1.1"
+
+[server-dependencies]
+Profileservice = "firecam702/profileservice@1.0.0"

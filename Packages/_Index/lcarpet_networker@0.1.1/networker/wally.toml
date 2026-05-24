@@ -1,0 +1,11 @@
+[package]
+name = "lcarpet/networker"
+description = "networker, 04/17/2026"
+authors = ["lcarpet"]
+license = "MIT"
+version = "0.1.1"
+registry = "https://github.com/UpliftGames/wally-index"
+realm = "shared"
+exclude = ["aftman.toml"]
+
+[dependencies]
