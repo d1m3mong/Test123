@@ -1,16 +1,7 @@
-export type Modifier = {
-	name: string,
-	rarity: string,
-	statModifier: { [string]: number },
-	effect: (() -> ())?,
-	visualEffect: (() -> ())?,
-}
-
-export type EnemyLootTableModifiers = {
-	modifiers: { [string]: Modifier },
-}
-
 local ModifierTable = require(script.Parent.ModifierTable)
+local EnemyTypes = require(script.Parent.EnemyTypes)
+type Modifier = EnemyTypes.Modifier
+type EnemyLootTableModifiers = EnemyTypes.EnemyLootTableModifiers
 
 local RARITY_WEIGHTS: { [string]: number } = {
 	Common = 60,
@@ -40,12 +31,7 @@ function EnemyLootTableModifiers:applyModifier(
 				modified[stat] = math.round(modified[stat] * multiplier)
 			end
 		end
-		if modifier.effect then
-			modifier.effect()
-		end
-		if modifier.visualEffect then
-			modifier.visualEffect()
-		end
+
 		return modified
 	else
 		warn("Modifier not found: " .. modifierName)

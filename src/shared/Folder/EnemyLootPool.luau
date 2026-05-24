@@ -1,26 +1,26 @@
-export type LootEntry = { Weight: number, Amount: number? } | { number }
+local EnemyTypes = require(script.Parent.EnemyTypes)
+type EnemyLoot = EnemyTypes.EnemyLoot
 
-export type LootPool = { [string]: LootEntry }
-
-export type Enemy = { [string]: LootPool }
-
-local EnemyLoot: Enemy = {
+local EnemyLoot: EnemyLoot = {
 	["Goblin"] = {
-		["Gold Coin"] = { 1 },
+		["Gold Coin"] = { weight = 1, itemType = "Currency", pictureId = "rbxassetid://12345678" },
+		["Wooden Sword"] = { weight = 0.5, itemType = "Weapon", pictureId = "rbxassetid://87654321" },
 	},
 	["Orc"] = {
-		["Gold Coin"] = { 1 },
-		["Iron Sword"] = { 0.5 },
+		["Gold Coin"] = { weight = 1, itemType = "Currency", pictureId = "rbxassetid://12345678" },
+		["Iron Sword"] = { weight = 0.5, itemType = "Weapon", pictureId = "rbxassetid://87654321" },
+		["Health Potion"] = { weight = 0.2, itemType = "Consumable", pictureId = "rbxassetid://11111111" },
 	},
 	["Troll"] = {
-		["Gold Coin"] = { Weight = 1, Amount = 10 },
-		["Health Potion"] = { 0.2 },
+		["Gold Coin"] = { weight = 1, itemType = "Currency", pictureId = "rbxassetid://12345678", amount = 10 },
+		["Health Potion"] = { weight = 0.2, itemType = "Consumable", pictureId = "rbxassetid://11111111" },
+		["Club"] = { weight = 1, itemType = "Weapon", pictureId = "rbxassetid://22222222" },
 	},
 	["Dragon"] = {
-		["Gold Coin"] = { Weight = 1, Amount = 100 },
-		["Diamond"] = { 0.5 },
-		["Dragon Scale"] = { 0.3 },
-		["Summing Eye"] = { 0.1 },
+		["Gold Coin"] = { weight = 1, itemType = "Currency", pictureId = "rbxassetid://12345678", amount = 100 },
+		["Diamond"] = { weight = 0.5, itemType = "Material", pictureId = "rbxassetid://87654321" },
+		["Dragon Scale"] = { weight = 0.3, itemType = "Material", pictureId = "rbxassetid://11111111" },
+		["Summing Eye"] = { weight = 0.1, itemType = "Material", pictureId = "rbxassetid://22222222" },
 	},
 }
 

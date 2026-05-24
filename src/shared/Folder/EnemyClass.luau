@@ -1,27 +1,23 @@
 local EnemyLootPool = require(script.Parent.EnemyLootPool)
 local EnemyLootTableModifiersMod = require(script.Parent.EnemyLootTableModifiers)
 local EnemyLootTableModifiers = EnemyLootTableModifiersMod.new()
+local EnemyTypes = require(script.Parent.EnemyTypes)
 
-type LootEntry = { Weight: number?, Amount: number? } | { number }
-
-export type Enemy = {
-	name: string,
-	health: number,
-	damage: number,
-	enemyModel: Model,
-	lootTable: { [string]: LootEntry },
-}
+--ype LootEntry = { Weight: number?, Amount: number? } | { number }
+type Enemy = EnemyTypes.Enemy
+type LootEntry = EnemyTypes.LootEntry
 
 local Enemy = {}
 Enemy.__index = Enemy
 
-function Enemy.new(name: string, health: number, damage: number, enemyModel: Model): Enemy
+function Enemy.new(name: string, health: number, damage: number, range: number, enemyModel: Model): Enemy
 	local self = setmetatable({}, Enemy)
 
 	self.name = name
 	self.health = health
 	self.damage = damage
 	self.enemyModel = enemyModel
+	self.spawnedModel = nil
 	self.lootTable = EnemyLootPool[name] or {}
 
 	return self
@@ -30,9 +26,11 @@ end
 function Enemy:takeDamage(amount: number)
 	self.health -= amount
 	if self.health <= 0 then
-		self:die()
-		print(self.name .. " has been defeated!")
+		local loot = self:die()
+		return loot
 	end
+
+	return nil
 end
 
 function Enemy:die()
@@ -40,20 +38,28 @@ function Enemy:die()
 
 	for itemName, lootEntry in self.lootTable do
 		local entry = lootEntry :: any
-		local weight = entry.Weight or entry[1] or 0
-		local amount = entry.Amount or 1
+		local weight = entry[1] or 0
+		local itemType = entry[2]
+		local pictureId = entry[3]
+		local amount = entry[4] or 1
 
 		if math.random() < weight then
-			rolledLoot[itemName] = amount
+			rolledLoot[itemName] = {
+				amount = amount,
+				itemType = itemType,
+				pictureId = pictureId,
+			}
 		end
 	end
 
-	if math.random() < 0.3 then
-		local modifier = EnemyLootTableModifiers:rollModifier()
-		if modifier then
-			print("Applying modifier: " .. modifier.rarity)
-			rolledLoot = EnemyLootTableModifiers:applyModifier(modifier.name, rolledLoot)
-			print("Modified loot: ", rolledLoot, "with modifier: ", modifier.name)
+	for _, data in rolledLoot do
+		if data.itemType == "Weapon" then
+			if math.random() < 0.9 then
+				local modifier = EnemyLootTableModifiers:rollModifier()
+				if modifier then
+					data.modifier = modifier.name
+				end
+			end
 		end
 	end
 
@@ -62,7 +68,6 @@ function Enemy:die()
 		self.spawnedModel = nil
 	end
 
-	print(rolledLoot)
 	return rolledLoot
 end
 
@@ -71,6 +76,10 @@ function Enemy:Spawn(position: CFrame)
 
 	clone:PivotTo(position)
 	clone.Parent = workspace
+end
+
+function Enemy:IsAlive(): boolean
+	return self.health > 0
 end
 
 return Enemy
