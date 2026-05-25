@@ -30,11 +30,12 @@ function EnemyMove.new(enemy: Enemy, target: Vector3, maximumRadius: number?): E
 end
 
 function EnemyMove:computePath()
-	self.path:ComputeAsync(self.enemy.enemyModel.PrimaryPart.Position, self.target)
+	self.path:ComputeAsync(self.enemy.spawnedModel.PrimaryPart.Position, self.target)
 end
 
-function EnemyMove:execute()
-	local model = self.enemy.enemyModel
+function EnemyMove:execute(stateManager)
+	local model = self.enemy.spawnedModel
+
 	if not model or not model.PrimaryPart then
 		warn("Enemy has no spawned model or PrimaryPart")
 		return
@@ -46,25 +47,42 @@ function EnemyMove:execute()
 		return
 	end
 
-	while self.MaximumRadius < (model.PrimaryPart.Position - self.target).Magnitude do
-		local success, errorMessage = pcall(function()
-			self:computePath()
-		end)
+	local function getTarget()
+		if stateManager and stateManager.Args then
+			return stateManager.Args.Position -- read Position from the args table
+		end
+		return self.target
+	end
 
-		if not success then
-			warn("Pathfinding failed: " .. errorMessage)
+	while true do
+		local target = getTarget()
+		if not target then
 			break
 		end
 
-		if self.path.Status ~= Enum.PathStatus.Success then
-			warn("Path status: " .. tostring(self.path.Status))
+		if (model.PrimaryPart.Position - target).Magnitude <= self.MaximumRadius then
 			break
+		end
+
+		local success = pcall(function()
+			self.path:ComputeAsync(model.PrimaryPart.Position, target)
+		end)
+
+		if not success or self.path.Status ~= Enum.PathStatus.Success then
+			warn("Pathfinding failed or no path found")
+			task.wait(0.5)
+			continue
 		end
 
 		local waypoints = self.path:GetWaypoints()
 
 		for _, waypoint in waypoints do
-			if (model.PrimaryPart.Position - self.target).Magnitude <= self.MaximumRadius then
+			local currentTarget = getTarget()
+			if not currentTarget then
+				break
+			end
+
+			if (model.PrimaryPart.Position - currentTarget).Magnitude <= self.MaximumRadius then
 				break
 			end
 

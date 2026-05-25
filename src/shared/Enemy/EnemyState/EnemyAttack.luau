@@ -9,6 +9,28 @@ export type EnemyAttack = {
 	enemy: Enemy,
 }
 
+local function GetTargetPosition(target: any): Vector3?
+	if typeof(target) == "Vector3" then
+		return target
+	end
+
+	if typeof(target) == "Instance" then
+		if target:IsA("BasePart") then
+			return target.Position
+		end
+
+		if target:IsA("Model") and target.PrimaryPart then
+			return target.PrimaryPart.Position
+		end
+	end
+
+	if type(target) == "table" and target.Position then
+		return target.Position
+	end
+
+	return nil
+end
+
 local function GetHitboxPosition(enemy: Enemy): Vector3
 	if not enemy.spawnedModel or not enemy.spawnedModel.PrimaryPart then
 		return Vector3.new(0, 0, 0)
@@ -27,7 +49,7 @@ end
 local EnemyAttack = {}
 EnemyAttack.__index = EnemyAttack
 
-function EnemyAttack.new(enemy: Enemy, Target: Vector3): EnemyAttack
+function EnemyAttack.new(enemy: Enemy, Target: any): EnemyAttack
 	local self = setmetatable({}, EnemyAttack)
 
 	self.enemy = enemy
@@ -55,7 +77,13 @@ function EnemyAttack.new(enemy: Enemy, Target: Vector3): EnemyAttack
 end
 
 function EnemyAttack:execute()
-	if (self.enemy.spawnedModel.PrimaryPart.Position - self.Target).Magnitude <= self.range then
+	local targetPosition = GetTargetPosition(self.Target)
+	if not targetPosition then
+		warn("[EnemyAttack] Invalid target for attack")
+		return
+	end
+
+	if (self.enemy.spawnedModel.PrimaryPart.Position - targetPosition).Magnitude <= self.range then
 		self.Animations["Attack" .. self.CurrentCombo]:Play()
 
 		self.CurrentCombo += 1

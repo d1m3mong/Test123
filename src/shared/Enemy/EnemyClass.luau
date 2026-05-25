@@ -10,15 +10,15 @@ type LootEntry = EnemyTypes.LootEntry
 local Enemy = {}
 Enemy.__index = Enemy
 
-function Enemy.new(name: string, health: number, damage: number, range: number, enemyModel: Model): Enemy
+function Enemy.new(config: { name: string, health: number, damage: number }, enemyModel: Model): Enemy
 	local self = setmetatable({}, Enemy)
 
-	self.name = name
-	self.health = health
-	self.damage = damage
+	self.name = config.name
+	self.health = config.health
+	self.damage = config.damage
 	self.enemyModel = enemyModel
 	self.spawnedModel = nil
-	self.lootTable = EnemyLootPool[name] or {}
+	self.lootTable = EnemyLootPool[config.name] or {}
 
 	return self
 end
@@ -76,6 +76,8 @@ function Enemy:Spawn(position: CFrame)
 
 	clone:PivotTo(position)
 	clone.Parent = workspace
+
+	self.spawnedModel = clone
 end
 
 function Enemy:IsAlive(): boolean
