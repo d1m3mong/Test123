@@ -64,12 +64,14 @@ function EnemyAttack.new(enemy: Enemy, Target: any): EnemyAttack
 
 	self.animator = self.enemy.spawnedModel:FindFirstChildOfClass("Humanoid").Animator :: Animator
 	self.Animations = {}
+	self.Connection = nil
 
 	self.HitPlayers = {}
 
-	for _, anim in ipairs(AnimationFolder:GetChildren()) do
+	for _, anim in ipairs(AnimationFolder.Attack.Enemy:GetChildren()) do
 		if anim:IsA("Animation") then
 			self.Animations[anim.Name] = self.animator:LoadAnimation(anim)
+			self.Animations[anim.Name].Priority = Enum.AnimationPriority.Action
 		end
 	end
 
@@ -83,24 +85,37 @@ function EnemyAttack:execute()
 		return
 	end
 
-	if (self.enemy.spawnedModel.PrimaryPart.Position - targetPosition).Magnitude <= self.range then
-		self.Animations["Attack" .. self.CurrentCombo]:Play()
+	if (self.enemy.spawnedModel.PrimaryPart.Position - targetPosition).Magnitude > self.range then
+		warn("Target is out of range for attack")
+		return
+	end
 
-		self.CurrentCombo += 1
-		if self.CurrentCombo > self.MaxCombo then
-			self.CurrentCombo = 1
-		end
+	local track = self.Animations["Attack" .. self.CurrentCombo]
+	if not track then
+		warn("[EnemyAttack] Missing animation for combo " .. self.CurrentCombo)
+		return
+	end
+
+	self.CurrentCombo += 1
+	if self.CurrentCombo > self.MaxCombo then
+		self.CurrentCombo = 1
+	end
+
+	local hitPlayers = {}
+
+	local connection
+	connection = track:GetMarkerReachedSignal("Hit"):Connect(function()
+		print("Hit marker reached for", self.enemy.name)
 
 		local hitbox = Instance.new("Part")
-		hitbox.Size = Vector3.new(5, 5, 5)
+		hitbox.Size = Vector3.new(7.5, 7.5, 7.5)
 		hitbox.Transparency = 1
 		hitbox.CanCollide = false
 		hitbox.Anchored = true
 		hitbox.CFrame = CFrame.new(GetHitboxPosition(self.enemy))
-
 		hitbox.Parent = workspace
 
-		Debris:AddItem(hitbox, 0.3)
+		Debris:AddItem(hitbox, 0.15)
 
 		local params = OverlapParams.new()
 		params.FilterType = Enum.RaycastFilterType.Exclude
@@ -110,21 +125,25 @@ function EnemyAttack:execute()
 
 		for _, part in ipairs(partsInbound) do
 			local character = part.Parent
-			if character and character:FindFirstChild("Humanoid") then
-				local player = game.Players:GetPlayerFromCharacter(character)
-				if player and not self.HitPlayers[player] then
-					self.HitPlayers[player] = true
-					player.Character.Humanoid:TakeDamage(self.enemy.damage)
+			local humanoid = character and character:FindFirstChild("Humanoid")
 
-					task.delay(1, function()
-						self.HitPlayers[player] = nil
-					end)
+			if humanoid then
+				local player = game.Players:GetPlayerFromCharacter(character)
+
+				if player and not hitPlayers[player] then
+					hitPlayers[player] = true
+					humanoid:TakeDamage(self.enemy.damage or 10)
 				end
 			end
 		end
-	else
-		warn("Target is out of range for attack")
-	end
+
+		if connection then
+			connection:Disconnect()
+			connection = nil
+		end
+	end)
+
+	track:Play()
 end
 
 return EnemyAttack

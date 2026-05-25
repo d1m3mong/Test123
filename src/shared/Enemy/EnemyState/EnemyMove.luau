@@ -20,10 +20,10 @@ function EnemyMove.new(enemy: Enemy, target: Vector3, maximumRadius: number?): E
 	self.MaximumRadius = maximumRadius or 10
 
 	self.path = PathfindingService:CreatePath({
-		AgentRadius = 2,
+		AgentRadius = 8,
 		AgentHeight = self.enemy.spawnedModel:GetExtentsSize().Y,
 		AgentCanJump = false,
-		WaypointSpacing = 2,
+		WaypointSpacing = 1,
 	})
 
 	return self
@@ -70,7 +70,7 @@ function EnemyMove:execute(stateManager)
 
 		if not success or self.path.Status ~= Enum.PathStatus.Success then
 			warn("Pathfinding failed or no path found")
-			task.wait(0.5)
+			--task.wait(0.5)
 			continue
 		end
 

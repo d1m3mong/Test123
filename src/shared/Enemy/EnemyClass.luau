@@ -75,6 +75,7 @@ function Enemy:Spawn(position: CFrame)
 	local clone = self.enemyModel:Clone()
 
 	clone:PivotTo(position)
+	clone:AddTag("Enemy")
 	clone.Parent = workspace
 
 	self.spawnedModel = clone
