@@ -18,6 +18,7 @@
       "Server": {
         "$path": "src/server"
       },
+
       "ServerPackages": {
         "$path": "ServerPackages"
       }
@@ -29,13 +30,15 @@
       "StarterPlayerScripts": {
         "$className": "StarterPlayerScripts",
         "Client": {
-          "$path": "src/client"
+          "$path": "src/PlayerScripts"
         }
       },
 
       "StarterCharacterScripts": {
         "$className": "StarterCharacterScripts",
-        "$path": "src/sclient"
+        "Client": {
+          "$path": "src/CharacterScripts"
+        }
       }
     }
   }

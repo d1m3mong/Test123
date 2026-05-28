@@ -10,14 +10,44 @@ dependencies = []
 [[package]]
 name = "dijag/test123"
 version = "0.1.0"
-dependencies = [["Networker", "lcarpet/networker@0.1.1"], ["Vide", "alicesaidhi/vide@0.4.0"], ["Profileservice", "firecam702/profileservice@1.0.0"]]
+dependencies = [["Dataservice", "leifstout/dataservice@1.0.0"], ["Networker", "lcarpet/networker@0.1.1"], ["Vide", "alicesaidhi/vide@0.4.0"]]
 
 [[package]]
-name = "firecam702/profileservice"
-version = "1.0.0"
+name = "evaera/promise"
+version = "4.0.0"
 dependencies = []
+
+[[package]]
+name = "howmanysmall/janitor"
+version = "1.18.3"
+dependencies = [["Promise", "howmanysmall/typed-promise@4.0.6"]]
+
+[[package]]
+name = "howmanysmall/typed-promise"
+version = "4.0.6"
+dependencies = [["Promise", "evaera/promise@4.0.0"]]
 
 [[package]]
 name = "lcarpet/networker"
 version = "0.1.1"
+dependencies = []
+
+[[package]]
+name = "leifstout/dataservice"
+version = "1.0.0"
+dependencies = [["Janitor", "howmanysmall/janitor@1.18.3"], ["Networker", "leifstout/networker@0.3.1"], ["ProfileStore", "lm-loleris/profilestore@1.0.3"], ["Signal", "sleitnick/signal@2.0.3"]]
+
+[[package]]
+name = "leifstout/networker"
+version = "0.3.1"
+dependencies = [["Signal", "sleitnick/signal@2.0.3"]]
+
+[[package]]
+name = "lm-loleris/profilestore"
+version = "1.0.3"
+dependencies = []
+
+[[package]]
+name = "sleitnick/signal"
+version = "2.0.3"
 dependencies = []

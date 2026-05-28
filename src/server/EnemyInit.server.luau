@@ -78,17 +78,17 @@ task.spawn(function()
 					end
 
 					local distance = (rootPart.Position - enemyRoot.Position).Magnitude
-					warn("Distance from " .. player.Name .. " to " .. enemy.enemyModel.Name .. ": " .. distance)
+					--warn("Distance from " .. player.Name .. " to " .. enemy.enemyModel.Name .. ": " .. distance)
 
 					if distance <= 10 then
 						state:handleEvent("InAttackRange", { Target = rootPart.Position })
-						warn(player.Name .. " is in attack range of " .. enemy.enemyModel.Name)
+						--warn(player.Name .. " is in attack range of " .. enemy.enemyModel.Name)
 					elseif distance <= 40 then
 						state:handleEvent("PlayerSpotted", { Position = rootPart.Position })
-						warn(player.Name .. " is spotted by " .. enemy.enemyModel.Name)
+						--warn(player.Name .. " is spotted by " .. enemy.enemyModel.Name)
 					else
 						state:handleEvent("PlayerLost")
-						warn(player.Name .. " is lost by " .. enemy.enemyModel.Name)
+						--warn(player.Name .. " is lost by " .. enemy.enemyModel.Name)
 					end
 				end
 			else

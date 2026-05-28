@@ -7,6 +7,6 @@ realm = "shared"
 [dependencies]
 Vide = "alicesaidhi/vide@0.4.0"
 Networker = "lcarpet/networker@0.1.1"
+Dataservice = "leifstout/dataservice@1.0.0"
 
 [server-dependencies]
-Profileservice = "firecam702/profileservice@1.0.0"

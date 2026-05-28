@@ -86,7 +86,7 @@ function EnemyAttack:execute()
 	end
 
 	if (self.enemy.spawnedModel.PrimaryPart.Position - targetPosition).Magnitude > self.range then
-		warn("Target is out of range for attack")
+		--warn("Target is out of range for attack")
 		return
 	end
 
